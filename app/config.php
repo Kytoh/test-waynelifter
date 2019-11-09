@@ -17,4 +17,14 @@
             }
             return $ret;
         }
+
+        /**
+         * @param $name
+         * @param $value
+         */
+        public function updateSomething($name, $value)
+        {
+            config::where('name', $name)
+                ->update(['value' => $value]);
+        }
     }

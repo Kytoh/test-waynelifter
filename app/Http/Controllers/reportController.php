@@ -3,6 +3,7 @@
     namespace App\Http\Controllers;
 
     use App\Entity\Lift;
+    use Mockery\Exception;
 
     /**
      * Controlador de Reportes. Muahahaha
@@ -24,19 +25,18 @@
         function __construct()
         {
             $config = (new \App\config)->getConfigs();
-            $steps = (new \App\steps)->getReportable();
+            $this->steps = (new \App\steps)->getReportable();
 
             $this->liftCount = $config['liftCount'];
             $this->floorCount = $config['floorCount'];
 
-            $this->steps = $steps;
             $this->currentTime = strtotime('1 January 1970 00:00:00');
-            return;
         }
 
         /**
          * Build a basicReport with database data
          * Basic Report, every step is individually and have no relation with others.
+         * @deprecated
          *
          * @return \Illuminate\View\View
          */
@@ -91,58 +91,65 @@
          */
         public function fullReport(): \Illuminate\View\View
         {
+            // Variable Setters
             $stepsCount = count($this->steps) - 1; // Index 0
             $this->currentTime = strtotime('1 January 1970 00:00:00');
-            // Initialize Elevators
             $this->lifts = [];
+
+            // Initialize Elevators
             for ($i = 0; $i < $this->liftCount; $i++) {
                 $this->lifts[$i] = new Lift();
             }
-
-            // Report the elevators at 00:00, to know where they are
-            //$this->report[] = $this->logReport();
-
-            // Initialize next Time to prepare to loop
+            // Initialize next Time on Steps to prepare to loop
             for ($i = 0; $i <= $stepsCount; $i++) {
                 $this->steps[$i]['next'] = $this->nextStepExecution($this->steps[$i]);
             }
 
+            // Welcome to the Loop
             while ($this->currentTime < 86400) {
+                // Iterate on time
                 $this->OneMore();
 
+                // Check every stepcount. To reduce number of loops, a mid-array could be created to manage the "next" time instead of doing loops
                 for ($i = 0; $i <= $stepsCount; $i++) {
-
+                    // Every Iteration, we check if someone should have pressed the call button to the elevator. On real world, this would be an API...
                     if ($this->currentTime >= $this->steps[$i]['next'] && $this->currentTime < $this->steps[$i]['endTime']) {
+                        // We can have three request
                         if (count($this->steps[$i]['startFloor']) > 1 && count($this->steps[$i]['endFloor']) == 1) {
+                            // n floors to 1 floor
                             foreach ($this->steps[$i]['startFloor'] as $stFl) {
                                 ($this->lifts[$this->getBestLift($stFl)])
                                     ->moveLift($stFl, $this->steps[$i]['endFloor'][0], $this->currentTime);
                             }
                         } elseif (count($this->steps[$i]['startFloor']) == 1 && count($this->steps[$i]['endFloor']) > 1) {
+                            // 1 floor to n floors
                             foreach ($this->steps[$i]['endFloor'] as $enFl) {
                                 ($this->lifts[$this->getBestLift($this->steps[$i]['startFloor'][0])])
                                     ->moveLift($this->steps[$i]['startFloor'][0], $enFl, $this->currentTime);
                             }
                         } elseif (count($this->steps[$i]['startFloor']) == 1 && count($this->steps[$i]['endFloor']) == 1) {
+                            // or 1 floor to 1 floor
                             ($this->lifts[$this->getBestLift($this->steps[$i]['startFloor'][0])])
                                 ->moveLift($this->steps[$i]['startFloor'][0], $this->steps[$i]['endFloor'][0], $this->currentTime);
                         } else {
-                            echo 'Error';
+                            // And of course, an error else that would never happen
+                            throw new Exception('Kaboom');
                         }
-
+                        // Lets log the movement.
                         $this->steps[$i]['last'] = $this->steps[$i]['next'];
-
-                        // Send Report
                         $this->report[] = $this->logReport();
 
+                        // And calculate when the next execution will be done
                         $this->steps[$i]['next'] = $this->nextStepExecution($this->steps[$i]);
                     }
                 }
             }
+            // Send to view
             return View('report/full', ['report' => $this->report]);
         }
 
         /**
+         *  Calculate next execution time. If there is no execution done, set the Start Time
          * @param array $step
          * @return int
          */
@@ -152,6 +159,7 @@
         }
 
         /**
+         * Lets Log any movement.
          * @return array
          */
         private function logReport(): array
@@ -171,7 +179,8 @@
         }
 
         /**
-         * Move the currentTime one minute more :D
+         * Move the currentTime one minute more or whatever user sends. :D
+         * @param string $data
          */
         private function OneMore($data = '+1 minutes'): void
         {
@@ -179,7 +188,9 @@
         }
 
         /**
-         * Search the best lift to use that have the lowest distance with our current lift
+         * Search the best lift to use that have the lowest distance with our current lift.
+         * Would try to use the less used lift too.
+         * FE. If two lifts have the same distance to the start point, will use the elevator that has been used less until that moment
          * @param int $startFloor
          * @return int
          */
@@ -197,7 +208,9 @@
                     $bestCurrently['count'] = $singleLift->count;
                 }
             }
-            if($bestCurrently['liftId'] == -1 && $startFloor != 999){
+
+            // Cause we are doing a nested call, lets filter the first call
+            if ($bestCurrently['liftId'] == -1 && $startFloor != 999) {
                 $this->checkCollision();
                 $bestCurrently['liftId'] = $this->getBestLift($startFloor);
             }
@@ -205,9 +218,10 @@
         }
 
         /**
-         * Check if currently all the lifts are occuped for the current time. If are occuped, people will must wait 30 secs till at least one elevator is free
+         * Check if currently all the lifts are occupied for the current time.
+         * If all have been used that moment, people will a 30 secs compulsary delay until at least one elevator is free (well, all elevators will be free)
          */
-        private function checkCollision() : void
+        private function checkCollision(): void
         {
             if ($this->getBestLift(999) == -1) {
                 $this->OneMore('+30 seconds');

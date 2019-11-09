@@ -4,6 +4,10 @@
 
     use Illuminate\Database\Eloquent\Model;
 
+    /**
+     * Class steps
+     * @package App
+     */
     class steps extends Model
     {
         /**
@@ -28,8 +32,37 @@
             return $eval;
         }
 
+        /**
+         * @return steps[]|\Illuminate\Database\Eloquent\Collection
+         */
         public function getAllSteps()
         {
             return steps::all();
+        }
+
+        /**
+         * @param $stepList
+         */
+        public static function updateSteps($stepList)
+        {
+            if (isset($stepList['id']) && $stepList['id'] != null) {
+                $step = steps::find($stepList['id']);
+            } else {
+                $step = new steps;
+            }
+            $step->minuteInterval = $stepList['minuteInterval'];
+            $step->startTime = $stepList['startTime'];
+            $step->endTime = $stepList['endTime'];
+            $step->startFloor = $stepList['startFloor'];
+            $step->endFloor = $stepList['endFloor'];
+            $step->save();
+        }
+
+        /**
+         * @param $stepId
+         */
+        public static function deleteStep($stepId): void
+        {
+            steps::destroy($stepId);
         }
     }

@@ -18,6 +18,7 @@
     Route::group(['prefix' => 'config', 'as' => 'config.'], function () {
         Route::get('/', 'configController@index')->name('index');
         Route::post('/', 'configController@update')->name('update');
+        Route::delete('/', 'configController@delete')->name('delete');
     });
 
     Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
