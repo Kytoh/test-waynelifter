@@ -50,7 +50,7 @@
                     'created_at' => DB::raw('CURRENT_TIMESTAMP')
                 ],
                 [
-                    'minuteInterval' => 5,
+                    'minuteInterval' => 20,
                     'startTime' => '110000',
                     'endtime' => '182000',
                     'startFloor' => '[0]',

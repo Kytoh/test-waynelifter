@@ -14,6 +14,7 @@
             $this->count = 0;
             $this->lastMoveTime = -1;
             $this->lastMoveCount = -1;
+            $this->lastCall = -1;
         }
 
         /**
@@ -30,6 +31,7 @@
             $this->lastMoveCount = abs($this->location - $call) + abs($call - $end);;
             $this->location = $end;
             $this->lastMoveTime = $time;
+            $this->lastCall = $call;
         }
 
     }

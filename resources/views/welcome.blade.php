@@ -1,100 +1,19 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.master')
+@section('title', 'Welcome')
 
-    <title>Laravel</title>
+@section('content')
+    <div class="col-md-12">
+        <h2>Welcome</h2>
+        to Wayne Lifter App commonly called The Welter.
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-
-    <!-- Styles -->
-    <style>
-        html, body {
-            background-color: #fff;
-            color: #636b6f;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 200;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .full-height {
-            height: 100vh;
-        }
-
-        .flex-center {
-            align-items: center;
-            display: flex;
-            justify-content: center;
-        }
-
-        .position-ref {
-            position: relative;
-        }
-
-        .top-right {
-            position: absolute;
-            right: 10px;
-            top: 18px;
-        }
-
-        .content {
-            text-align: center;
-        }
-
-        .title {
-            font-size: 84px;
-        }
-
-        .links > a {
-            color: #636b6f;
-            padding: 0 25px;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: .1rem;
-            text-decoration: none;
-            text-transform: uppercase;
-        }
-
-        .m-b-md {
-            margin-bottom: 30px;
-        }
-    </style>
-</head>
-<body>
-<div class="flex-center position-ref full-height">
-    @if (Route::has('login'))
-        <div class="top-right links">
-            @auth
-                <a href="{{ url('/home') }}">Home</a>
-            @else
-                <a href="{{ route('login') }}">Login</a>
-
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}">Register</a>
-                @endif
-            @endauth
-        </div>
-    @endif
-
-    <div class="content">
-        <div class="title m-b-md">
-            Laravel
-        </div>
-
-        <div class="links">
-            <a href="https://laravel.com/docs">Docs</a>
-            <a href="https://laracasts.com">Laracasts</a>
-            <a href="https://laravel-news.com">News</a>
-            <a href="https://blog.laravel.com">Blog</a>
-            <a href="https://nova.laravel.com">Nova</a>
-            <a href="https://forge.laravel.com">Forge</a>
-            <a href="https://vapor.laravel.com">Vapor</a>
-            <a href="https://github.com/laravel/laravel">GitHub</a>
-        </div>
+        <p class="mt-5">Notes from the developer to the developer with love:
+        <ul>
+            <li>On Config Menu, you will be able to edit the elevators and the steps.</li>
+            <li>The App allows up to 999 elevators (for your safety, please, don't try if its not extremely necessary, for the sake of your device)</li>
+            <li>There is a 'Floor Number' variable, but currently its useless. It was though to what you could put on "start floor" and "end floor", but... new ticket)</li>
+            <li>The app try to balance the use of every elevator (except when there are three elevators, currently dont know why, could be great to know, but beh... new ticket)</li>
+            <li>Because if you create two new tickes, probably you will need to create a third...</li>
+            <li>There is available a "noob report" here -> <a href="{{route('report.basic')}}">X</a>. But is so noob, so please, dont look at it. Here every step is isolated, so the app to first step, then restart, second step, then restart, etc.... Yup, very noob :) Don't kill me yet</li>
+        </ul></p>
     </div>
-</div>
-</body>
-</html>
+@stop

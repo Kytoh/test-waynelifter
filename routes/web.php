@@ -13,7 +13,7 @@
 
     Route::get('/', function () {
         return view('welcome');
-    });
+    })->name('welcome');
 
     Route::group(['prefix' => 'config', 'as' => 'config.'], function () {
         Route::get('/', 'configController@index')->name('index');
@@ -21,7 +21,8 @@
     });
 
     Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
-        Route::get('/basic', 'reportController@fullReportBasic')->name('basic');
+        Route::get('/basic', 'reportController@basicReport')->name('basic');
+        Route::get('/full', 'reportController@fullReport')->name('full');
     });
 
 

@@ -1,5 +1,5 @@
 @extends('layouts.master')
-
+@section('title', 'Config Steps')
 @section('content')
     <form method="POST">
         @csrf

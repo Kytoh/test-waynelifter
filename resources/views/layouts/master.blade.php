@@ -4,20 +4,43 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>App Name - @yield('title')</title>
+    <title>Wayne Lifter - @yield('title')</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/app.css">
 
 </head>
 <body>
-@section('sidebar')
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Wayne Lifter</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('welcome')}}">Welcome</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('config.index')}}">Config</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('report.full')}}">Report</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-@show
 
-<div class="container">
-    @yield('content')
+<div class="container mt-5">
+    <div class="row">
+        @yield('content')
+    </div>
 </div>
+
 <script src="/js/app.js"/>
 </body>
 </html>
